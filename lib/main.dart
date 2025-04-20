@@ -4,7 +4,9 @@ import 'package:recycle_app/pages/home.dart';
 import 'package:recycle_app/pages/login.dart';
 import 'package:recycle_app/pages/onboarding.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
