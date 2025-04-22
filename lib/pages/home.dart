@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recycle_app/pages/upload_item.dart';
+import 'package:recycle_app/services/shared_pref.dart';
 import 'package:recycle_app/services/widget_support.dart';
 
 class Home extends StatefulWidget {
@@ -10,6 +11,28 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String? id;
+
+  getthesharedpref() async {
+    id = await SharedpreferenceHelper().getUserId();
+    setState(() {
+      
+    });
+  }
+
+  ontheload() async {
+    await getthesharedpref();
+    setState(() {
+      
+    });
+  }
+
+  @override
+  void initState() {
+    ontheload();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +99,7 @@ class _HomeState extends State<Home> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadItem(category: "Plastic", id: id)));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadItem(category: "Plastic", id: id!)));
                       },
                       child: Column(
                         children: [
