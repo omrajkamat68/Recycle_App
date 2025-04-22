@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:recycle_app/services/widget_support.dart';
 
 class UploadItem extends StatefulWidget {
@@ -10,6 +13,18 @@ class UploadItem extends StatefulWidget {
 }
 
 class _UploadItemState extends State<UploadItem> {
+  TextEditingController addresscontroller = new TextEditingController();
+  TextEditingController quantitycontroller = new TextEditingController();
+
+  final ImagePicker _picker = ImagePicker();
+  File? selectedImage;
+
+  Future getImage() async {
+    var image = await _picker.pickImage(source: ImageSource.gallery);
+    selectedImage = File(image!.path);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,18 +73,35 @@ class _UploadItemState extends State<UploadItem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 30.0),
-                    Center(
-                      child: Container(
-                        height: 180,
-                        width: 180,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black45, width: 2.0),
-                          borderRadius: BorderRadius.circular(20),
+                    selectedImage != null
+                        ? Container(
+                          height: 180,
+                          width: 180,
+                          child: Image.file(selectedImage!, fit: BoxFit.cover),
+                        )
+                        : GestureDetector(
+                          onTap: () {
+                            getImage();
+                          },
+                          child: Center(
+                            child: Container(
+                              height: 180,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.black45,
+                                  width: 2.0,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                size: 30.0,
+                              ),
+                            ),
+                          ),
                         ),
-                        child: Icon(Icons.camera_alt_outlined, size: 30.0),
-                      ),
-                    ),
                     SizedBox(height: 50.0),
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -90,6 +122,7 @@ class _UploadItemState extends State<UploadItem> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextField(
+                            controller: addresscontroller,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               prefixIcon: Icon(
@@ -124,6 +157,7 @@ class _UploadItemState extends State<UploadItem> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextField(
+                            controller: quantitycontroller,
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               prefixIcon: Icon(
