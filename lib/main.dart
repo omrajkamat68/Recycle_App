@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:recycle_app/pages/home.dart';
 import 'package:recycle_app/pages/login.dart';
 import 'package:recycle_app/pages/onboarding.dart';
+import 'package:recycle_app/pages/upload_item.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: LogIn()
+      home: Home()
     );
   }
 }

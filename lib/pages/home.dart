@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recycle_app/pages/upload_item.dart';
 import 'package:recycle_app/services/widget_support.dart';
 
 class Home extends StatefulWidget {
@@ -73,28 +74,33 @@ class _HomeState extends State<Home> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Color(0xFFececf8),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: Colors.black45,
-                              width: 2.0,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> UploadItem(category: "Plastic", id: id)));
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFececf8),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.black45,
+                                width: 2.0,
+                              ),
+                            ),
+                            child: Image.asset(
+                              "images/plastic.png",
+                              height: 70,
+                              width: 70,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          child: Image.asset(
-                            "images/plastic.png",
-                            height: 70,
-                            width: 70,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(height: 5.0),
-                        Text("Plastic", style: AppWidget.normaltextstyle(20.0)),
-                      ],
+                          SizedBox(height: 5.0),
+                          Text("Plastic", style: AppWidget.normaltextstyle(20.0)),
+                        ],
+                      ),
                     ),
 
                     SizedBox(width: 30.0),
