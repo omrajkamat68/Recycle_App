@@ -27,4 +27,11 @@ class DatabaseMethods {
         .doc(id)
         .set(userInfoMap);
   }
+
+  Future<Stream<QuerySnapshot>> getAdminApproval() async {
+    return await FirebaseFirestore.instance
+        .collection("Requests")
+        .where("Status", isEqualTo: "Pending")
+        .snapshots();
+  }
 }
