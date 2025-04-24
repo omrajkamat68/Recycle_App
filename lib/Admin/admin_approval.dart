@@ -119,17 +119,23 @@ class _AdminApprovalState extends State<AdminApproval> {
                                 ],
                               ),
                               SizedBox(height: 5.0),
-                              Container(
-                                height: 40,
-                                width: 180,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Approve",
-                                    style: AppWidget.whitetextstyle(20.0),
+                              GestureDetector(
+                                onTap: () async {
+                                  await DatabaseMethods().updateAdminRequest(ds.id);
+                                  await DatabaseMethods().updateUserRequest(ds["UserId"], ds.id);
+                                },
+                                child: Container(
+                                  height: 40,
+                                  width: 180,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Approve",
+                                      style: AppWidget.whitetextstyle(20.0),
+                                    ),
                                   ),
                                 ),
                               ),
