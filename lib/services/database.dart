@@ -50,4 +50,10 @@ class DatabaseMethods {
         .doc(itemid)
         .update({"Status": "Approved"});
   }
+
+  Future updateUserPoints(String id, String points) async {
+    return await FirebaseFirestore.instance.collection("users").doc(id).update({
+      "Points": points,
+    });
+  }
 }

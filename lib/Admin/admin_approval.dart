@@ -24,6 +24,25 @@ class _AdminApprovalState extends State<AdminApproval> {
     super.initState();
   }
 
+  Future<String> getUserPoints(String docId) async {
+    try {
+      DocumentSnapshot docSnapshot =
+          await FirebaseFirestore.instance.collection('users').doc(docId).get();
+
+      if (docSnapshot.exists) {
+        // Get 'userpoints' field as String (convert if it's int)
+        var data = docSnapshot.data() as Map<String, dynamic>;
+        var points = data['Points'];
+        return points.toString();
+      } else {
+        return 'No document';
+      }
+    } catch (e) {
+      print('Error: $e');
+      return 'Error';
+    }
+  }
+
   Widget allApprovals() {
     return StreamBuilder(
       stream: approvalStream,
@@ -121,8 +140,22 @@ class _AdminApprovalState extends State<AdminApproval> {
                               SizedBox(height: 5.0),
                               GestureDetector(
                                 onTap: () async {
-                                  await DatabaseMethods().updateAdminRequest(ds.id);
-                                  await DatabaseMethods().updateUserRequest(ds["UserId"], ds.id);
+                                  String userpoints = await getUserPoints(
+                                    ds["UserId"],
+                                  );
+                                  int updatedpoints =
+                                      int.parse(userpoints) + 100;
+                                  await DatabaseMethods().updateUserPoints(
+                                    ds["UserId"],
+                                    updatedpoints.toString(),
+                                  );
+                                  await DatabaseMethods().updateAdminRequest(
+                                    ds.id,
+                                  );
+                                  await DatabaseMethods().updateUserRequest(
+                                    ds["UserId"],
+                                    ds.id,
+                                  );
                                 },
                                 child: Container(
                                   height: 40,
