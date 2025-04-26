@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:random_string/random_string.dart';
 import 'package:recycle_app/services/database.dart';
 import 'package:recycle_app/services/shared_pref.dart';
 import 'package:recycle_app/services/widget_support.dart';
@@ -12,10 +13,11 @@ class Points extends StatefulWidget {
 }
 
 class _PointsState extends State<Points> {
-  String? id, mypoints;
+  String? id, mypoints, name;
 
   getthesharedpref() async {
     id = await SharedpreferenceHelper().getUserId();
+    name = await SharedpreferenceHelper().getUserName();
     setState(() {});
   }
 
@@ -234,6 +236,24 @@ class _PointsState extends State<Points> {
                           id!,
                           updatedpoints.toString(),
                         );
+
+                        Map<String, dynamic> userReedemMap = {
+                          "Name": name,
+                          "Points": pointscontroller.text,
+                          "UPI": upicontroller.text,
+                          "Status": "Pending",
+                        };
+                        String reedemid = randomAlphaNumeric(10);
+                        await DatabaseMethods().addUserReedemPoints(
+                          userReedemMap,
+                          id!,
+                          reedemid,
+                        );
+                        await DatabaseMethods().addAdminReedemRequests(
+                          userReedemMap,
+                          reedemid,
+                        );
+                        mypoints = await getUserPoints(id!);
                         setState(() {});
                         Navigator.pop(context);
                       }

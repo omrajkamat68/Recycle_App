@@ -51,6 +51,29 @@ class DatabaseMethods {
         .update({"Status": "Approved"});
   }
 
+  Future addUserReedemPoints(
+    Map<String, dynamic> userInfoMap,
+    String id,
+    String reedemid,
+  ) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .collection("Reedem")
+        .doc(reedemid)
+        .set(userInfoMap);
+  }
+
+  Future addAdminReedemRequests(
+    Map<String, dynamic> userInfoMap,
+    String reedemid,
+  ) async {
+    return await FirebaseFirestore.instance
+        .collection("Reedem")
+        .doc(reedemid)
+        .set(userInfoMap);
+  }
+
   Future updateUserPoints(String id, String points) async {
     return await FirebaseFirestore.instance.collection("users").doc(id).update({
       "Points": points,
