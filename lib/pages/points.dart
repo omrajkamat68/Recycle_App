@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:random_string/random_string.dart';
 import 'package:recycle_app/services/database.dart';
 import 'package:recycle_app/services/shared_pref.dart';
@@ -14,6 +15,7 @@ class Points extends StatefulWidget {
 
 class _PointsState extends State<Points> {
   String? id, mypoints, name;
+  Stream? pointsStream;
 
   getthesharedpref() async {
     id = await SharedpreferenceHelper().getUserId();
@@ -24,6 +26,7 @@ class _PointsState extends State<Points> {
   ontheload() async {
     await getthesharedpref();
     mypoints = await getUserPoints(id!);
+    pointsStream = await DatabaseMethods().getUserTransactions(id!);
     setState(() {});
   }
 
@@ -53,6 +56,87 @@ class _PointsState extends State<Points> {
       print('Error: $e');
       return 'Error';
     }
+  }
+
+  Widget allApprovals() {
+    return StreamBuilder(
+      stream: pointsStream,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.docs[index];
+                return Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.only(
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: 20.0,
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 233, 233, 249),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          ds["Date"],
+                          textAlign: TextAlign.center,
+                          style: AppWidget.whitetextstyle(22.0),
+                        ),
+                      ),
+                      SizedBox(width: 20.0),
+                      Column(
+                        children: [
+                          Text(
+                            "Redeem Points",
+                            style: AppWidget.normaltextstyle(20.0),
+                          ),
+                          Text(
+                            ds["Points"],
+                            style: AppWidget.greentextstyle(26.0),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 30.0),
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color:
+                              ds["Status"] == "Approved"
+                                  ? const Color.fromARGB(78, 76, 175, 79)
+                                  : const Color.fromARGB(48, 241, 77, 66),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          ds["Status"],
+                          style: TextStyle(
+                            color:
+                                ds["Status"] == "Approved"
+                                    ? Colors.green
+                                    : Colors.red,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
+            : Container();
+      },
+    );
   }
 
   @override
@@ -154,6 +238,35 @@ class _PointsState extends State<Points> {
                                 ),
                               ),
                             ),
+                            SizedBox(height: 20.0),
+                            Expanded(
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30),
+                                    topRight: Radius.circular(30),
+                                  ),
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 10.0),
+                                    Text(
+                                      "Last Transactions",
+                                      style: AppWidget.normaltextstyle(22.0),
+                                    ),
+                                    SizedBox(height: 20.0),
+                                    Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                          2,
+                                      child: allApprovals(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -229,6 +342,8 @@ class _PointsState extends State<Points> {
                           upicontroller.text != "" &&
                           int.parse(mypoints!) >
                               int.parse(pointscontroller.text)) {
+                        DateTime now = DateTime.now();
+                        String formattedDate = DateFormat('d\nMMM').format(now);
                         int updatedpoints =
                             int.parse(mypoints!) -
                             int.parse(pointscontroller.text);
@@ -242,6 +357,7 @@ class _PointsState extends State<Points> {
                           "Points": pointscontroller.text,
                           "UPI": upicontroller.text,
                           "Status": "Pending",
+                          "Date": formattedDate,
                         };
                         String reedemid = randomAlphaNumeric(10);
                         await DatabaseMethods().addUserReedemPoints(

@@ -35,6 +35,14 @@ class DatabaseMethods {
         .snapshots();
   }
 
+  Future<Stream<QuerySnapshot>> getUserTransactions(String id) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .doc(id)
+        .collection("Reedem")
+        .snapshots();
+  }
+
   Future updateAdminRequest(String id) async {
     return await FirebaseFirestore.instance
         .collection("Requests")
