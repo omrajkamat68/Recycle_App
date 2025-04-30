@@ -107,7 +107,7 @@ class _PointsState extends State<Points> {
                           ),
                         ],
                       ),
-                      SizedBox(width: 30.0),
+                      SizedBox(width: 20.0),
                       Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -358,6 +358,7 @@ class _PointsState extends State<Points> {
                           "UPI": upicontroller.text,
                           "Status": "Pending",
                           "Date": formattedDate,
+                          "UserId": id,
                         };
                         String reedemid = randomAlphaNumeric(10);
                         await DatabaseMethods().addUserReedemPoints(

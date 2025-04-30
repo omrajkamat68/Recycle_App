@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:recycle_app/services/database.dart';
 import 'package:recycle_app/services/widget_support.dart';
 
 class AdminReedem extends StatefulWidget {
@@ -9,6 +11,132 @@ class AdminReedem extends StatefulWidget {
 }
 
 class _AdminReedemState extends State<AdminReedem> {
+  Stream? reedemStream;
+
+  getontheload() async {
+    reedemStream = await DatabaseMethods().getAdminReedemApproval();
+    setState(() {
+      
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getontheload();
+  }
+
+  Widget allApprovals() {
+    return StreamBuilder(
+      stream: reedemStream,
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.hasData
+            ? ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: snapshot.data.docs.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.docs[index];
+                return Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          ds["Date"],
+                          textAlign: TextAlign.center,
+                          style: AppWidget.whitetextstyle(22.0),
+                        ),
+                      ),
+                      SizedBox(width: 20.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.person,
+                                color: Colors.green,
+                                size: 25.0,
+                              ),
+                              SizedBox(width: 10.0),
+                              Text(
+                                ds["Name"],
+                                style: AppWidget.normaltextstyle(18.0),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.point_of_sale,
+                                color: Colors.green,
+                                size: 25.0,
+                              ),
+                              SizedBox(width: 10.0),
+                              Text(
+                                "Points Redeem : "+ds["Points"],
+                                style: AppWidget.normaltextstyle(18.0),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.monetization_on,
+                                color: Colors.green,
+                                size: 25.0,
+                              ),
+                              SizedBox(width: 10.0),
+                              Text(
+                                "UPI ID : "+ds["UPI"],
+                                style: AppWidget.normaltextstyle(18.0),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 5.0),
+                          GestureDetector(
+                            onTap: () async {
+                              await DatabaseMethods().updateAdminReedemRequest(ds.id);
+                              await DatabaseMethods().updateUserReedemRequest(ds["UserId"], ds.id);
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Approve",
+                                  style: AppWidget.whitetextstyle(18.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
+            : Container();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,51 +185,10 @@ class _AdminReedemState extends State<AdminReedem> {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.0,),
-                    Container(
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                      child: Row(children: [
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                          child: Text("22\nMar",
-                          textAlign: TextAlign.center,
-                          style: AppWidget.whitetextstyle(22.0),),
-                        ),
-                        SizedBox(width: 20.0,),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                          Row(children: [
-                            Icon(Icons.person, color: Colors.green, size: 25.0,),
-                            SizedBox(width: 10.0,),
-                            Text("Ayush Gupta", style: AppWidget.normaltextstyle(18.0),)
-                          ],),
-                          Row(children: [
-                            Icon(Icons.point_of_sale, color: Colors.green, size: 25.0,),
-                            SizedBox(width: 10.0,),
-                            Text("Points Redeem : 10", style: AppWidget.normaltextstyle(18.0),)
-                          ],),
-                          Row(children: [
-                            Icon(Icons.monetization_on, color: Colors.green, size: 25.0,),
-                            SizedBox(width: 10.0,),
-                            Text("UPI ID : ggggg@oksbi", style: AppWidget.normaltextstyle(18.0),)
-                          ],),
-                          SizedBox(height: 5.0,),
-                          Container(
-                            height: 40,
-                            width: 150,
-                            decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(10)),
-                            child: Center(child: Text("Approved", style: AppWidget.whitetextstyle(18.0),)),
-                          )
-                        ],)
-                      ],),
-                    )
-                  ],
+                  children: [SizedBox(height: 20.0),
+                  Container(
+                    height: MediaQuery.of(context).size.height/1.5,
+                    child: allApprovals())],
                 ),
               ),
             ),
