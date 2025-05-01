@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:recycle_app/Admin/admin_approval.dart';
+import 'package:recycle_app/Admin/admin_login.dart';
 import 'package:recycle_app/Admin/admin_reedem.dart';
 import 'package:recycle_app/pages/bottomnav.dart';
 import 'package:recycle_app/pages/home.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: BottomNav()
+      home: AdminLogin()
     );
   }
 }
