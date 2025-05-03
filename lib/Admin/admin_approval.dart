@@ -30,7 +30,6 @@ class _AdminApprovalState extends State<AdminApproval> {
           await FirebaseFirestore.instance.collection('users').doc(docId).get();
 
       if (docSnapshot.exists) {
-        // Get 'userpoints' field as String (convert if it's int)
         var data = docSnapshot.data() as Map<String, dynamic>;
         var points = data['Points'];
         return points.toString();
@@ -47,141 +46,141 @@ class _AdminApprovalState extends State<AdminApproval> {
     return StreamBuilder(
       stream: approvalStream,
       builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot ds = snapshot.data.docs[index];
-                return Container(
-                  margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                  child: Material(
-                    elevation: 2.0,
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.data.docs.isEmpty) {
+          return Center(child: Text("No approvals yet."));
+        }
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data.docs.length,
+          separatorBuilder:
+              (context, index) => SizedBox(height: 20), // Space between cards
+          itemBuilder: (context, index) {
+            DocumentSnapshot ds = snapshot.data.docs[index];
+            return Container(
+              margin: EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Material(
+                elevation: 2.0,
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black45, width: 2.0),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          Icons.recycling,
+                          size: 60,
+                          color: Colors.green,
+                        ),
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.black45,
-                                width: 2.0,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
+                      SizedBox(width: 20.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  color: Colors.green,
+                                  size: 28.0,
+                                ),
+                                SizedBox(width: 10.0),
+                                Text(
+                                  ds["Name"],
+                                  style: AppWidget.normaltextstyle(20.0),
+                                ),
+                              ],
                             ),
-                            child: Image.asset(
-                              "images/coca.png",
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          SizedBox(width: 20.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.person,
-                                    color: Colors.green,
-                                    size: 28.0,
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Text(
-                                    ds["Name"],
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: Colors.green,
+                                  size: 28.0,
+                                ),
+                                SizedBox(width: 10.0),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    ds["Address"],
                                     style: AppWidget.normaltextstyle(20.0),
                                   ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: Colors.green,
-                                    size: 28.0,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.inventory,
+                                  color: Colors.green,
+                                  size: 28.0,
+                                ),
+                                SizedBox(width: 10.0),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  child: Text(
+                                    ds["Quantity"],
+                                    style: AppWidget.normaltextstyle(20.0),
                                   ),
-                                  SizedBox(width: 10.0),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    child: Text(
-                                      ds["Address"],
-                                      style: AppWidget.normaltextstyle(20.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.inventory,
-                                    color: Colors.green,
-                                    size: 28.0,
-                                  ),
-                                  SizedBox(width: 10.0),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    child: Text(
-                                      ds["Quantity"],
-                                      style: AppWidget.normaltextstyle(20.0),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 5.0),
-                              GestureDetector(
-                                onTap: () async {
-                                  String userpoints = await getUserPoints(
-                                    ds["UserId"],
-                                  );
-                                  int updatedpoints =
-                                      int.parse(userpoints) + 100;
-                                  await DatabaseMethods().updateUserPoints(
-                                    ds["UserId"],
-                                    updatedpoints.toString(),
-                                  );
-                                  await DatabaseMethods().updateAdminRequest(
-                                    ds.id,
-                                  );
-                                  await DatabaseMethods().updateUserRequest(
-                                    ds["UserId"],
-                                    ds.id,
-                                  );
-                                },
-                                child: Container(
-                                  height: 40,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Approve",
-                                      style: AppWidget.whitetextstyle(20.0),
-                                    ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.0),
+                            GestureDetector(
+                              onTap: () async {
+                                String userpoints = await getUserPoints(
+                                  ds["UserId"],
+                                );
+                                int updatedpoints = int.parse(userpoints) + 100;
+                                await DatabaseMethods().updateUserPoints(
+                                  ds["UserId"],
+                                  updatedpoints.toString(),
+                                );
+                                await DatabaseMethods().updateAdminRequest(
+                                  ds.id,
+                                );
+                                await DatabaseMethods().updateUserRequest(
+                                  ds["UserId"],
+                                  ds.id,
+                                );
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 180,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Approve",
+                                    style: AppWidget.whitetextstyle(20.0),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                );
-              },
-            )
-            : Container();
+                ),
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -218,7 +217,6 @@ class _AdminApprovalState extends State<AdminApproval> {
                       ),
                     ),
                   ),
-
                   SizedBox(width: MediaQuery.of(context).size.width / 7),
                   Text(
                     "Admin Approval",
@@ -242,10 +240,7 @@ class _AdminApprovalState extends State<AdminApproval> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 20.0),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 1.5,
-                      child: allApprovals(),
-                    ),
+                    Expanded(child: allApprovals()),
                   ],
                 ),
               ),
