@@ -13,12 +13,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String? id, name;
+  String? id, name, userImage;
   Stream? pendingStream;
 
   getthesharedpref() async {
     id = await SharedpreferenceHelper().getUserId();
     name = await SharedpreferenceHelper().getUserName();
+    userImage = await SharedpreferenceHelper().getUserImage();
     setState(() {});
   }
 
@@ -38,65 +39,66 @@ class _HomeState extends State<Home> {
     return StreamBuilder(
       stream: pendingStream,
       builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-              padding: EdgeInsets.zero,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot ds = snapshot.data.docs[index];
-                return Container(
-                  margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: Colors.black45, width: 2.0),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.data.docs.isEmpty) {
+          return Center(child: Text("No pending requests."));
+        }
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: snapshot.data.docs.length,
+          separatorBuilder: (context, index) => SizedBox(height: 18),
+          itemBuilder: (context, index) {
+            DocumentSnapshot ds = snapshot.data.docs[index];
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 20.0),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.black45, width: 2.0),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 10.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 10.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            color: Colors.green,
-                            size: 30.0,
-                          ),
-                          SizedBox(width: 10.0),
-                          Text(
-                            ds["Address"],
-                            style: AppWidget.normaltextstyle(20.0),
-                          ),
-                        ],
+                      Icon(Icons.location_on, color: Colors.green, size: 30.0),
+                      SizedBox(width: 10.0),
+                      Text(
+                        ds["Address"],
+                        style: AppWidget.normaltextstyle(20.0),
                       ),
-                      Divider(),
-                      Image.asset(
-                        "images/chips.png",
-                        height: 150,
-                        width: 150,
-                        fit: BoxFit.cover,
-                      ),
-                      SizedBox(height: 10.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.layers, color: Colors.green, size: 30.0),
-                          SizedBox(width: 10.0),
-                          Text(
-                            ds["Quantity"],
-                            style: AppWidget.normaltextstyle(24.0),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10.0),
                     ],
                   ),
-                );
-              },
-            )
-            : Container();
+                  Divider(),
+                  Icon(
+                    Icons.recycling, // or any other icon from Icons class
+                    size: 60,
+                    color: Colors.green,
+                  ),
+                  SizedBox(height: 10.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.layers, color: Colors.green, size: 30.0),
+                      SizedBox(width: 10.0),
+                      Text(
+                        ds["Quantity"],
+                        style: AppWidget.normaltextstyle(24.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.0),
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -136,12 +138,28 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.only(right: 20.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              child: Image.asset(
-                                "images/boy.jpg",
-                                height: 60,
-                                width: 60,
-                                fit: BoxFit.cover,
-                              ),
+                              child:
+                                  userImage != null && userImage!.isNotEmpty
+                                      ? Image.network(
+                                        userImage!,
+                                        height: 60,
+                                        width: 60,
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Image.asset(
+                                                  "images/boy.jpg",
+                                                  height: 60,
+                                                  width: 60,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                      )
+                                      : Image.asset(
+                                        "images/boy.jpg",
+                                        height: 60,
+                                        width: 60,
+                                        fit: BoxFit.cover,
+                                      ),
                             ),
                           ),
                         ],
@@ -208,92 +226,128 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
-
                             SizedBox(width: 30.0),
-
-                            Column(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFececf8),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.black45,
-                                      width: 2.0,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => UploadItem(
+                                          category: "Paper",
+                                          id: id!,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFececf8),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: Colors.black45,
+                                        width: 2.0,
+                                      ),
+                                    ),
+                                    child: Image.asset(
+                                      "images/paper.png",
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  child: Image.asset(
-                                    "images/paper.png",
-                                    height: 70,
-                                    width: 70,
-                                    fit: BoxFit.cover,
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    "Paper",
+                                    style: AppWidget.normaltextstyle(20.0),
                                   ),
-                                ),
-                                SizedBox(height: 5.0),
-                                Text(
-                                  "Paper",
-                                  style: AppWidget.normaltextstyle(20.0),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-
                             SizedBox(width: 30.0),
-
-                            Column(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFececf8),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.black45,
-                                      width: 2.0,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => UploadItem(
+                                          category: "Battery",
+                                          id: id!,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFececf8),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: Colors.black45,
+                                        width: 2.0,
+                                      ),
+                                    ),
+                                    child: Image.asset(
+                                      "images/battery.png",
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  child: Image.asset(
-                                    "images/battery.png",
-                                    height: 70,
-                                    width: 70,
-                                    fit: BoxFit.cover,
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    "Battery",
+                                    style: AppWidget.normaltextstyle(20.0),
                                   ),
-                                ),
-                                SizedBox(height: 5.0),
-                                Text(
-                                  "Battery",
-                                  style: AppWidget.normaltextstyle(20.0),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-
                             SizedBox(width: 30.0),
-
-                            Column(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFececf8),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.black45,
-                                      width: 2.0,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => UploadItem(
+                                          category: "Glass",
+                                          id: id!,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFececf8),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: Colors.black45,
+                                        width: 2.0,
+                                      ),
+                                    ),
+                                    child: Image.asset(
+                                      "images/glass.png",
+                                      height: 70,
+                                      width: 70,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  child: Image.asset(
-                                    "images/glass.png",
-                                    height: 70,
-                                    width: 70,
-                                    fit: BoxFit.cover,
+                                  SizedBox(height: 5.0),
+                                  Text(
+                                    "Glass",
+                                    style: AppWidget.normaltextstyle(20.0),
                                   ),
-                                ),
-                                SizedBox(height: 5.0),
-                                Text(
-                                  "Glass",
-                                  style: AppWidget.normaltextstyle(20.0),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -307,10 +361,7 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       SizedBox(height: 20.0),
-                      Container(
-                        height: MediaQuery.of(context).size.height / 2,
-                        child: allPendingRequests(),
-                      ),
+                      allPendingRequests(),
                       SizedBox(height: 30.0),
                     ],
                   ),

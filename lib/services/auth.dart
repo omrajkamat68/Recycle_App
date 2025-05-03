@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:recycle_app/pages/bottomnav.dart';
 import 'package:recycle_app/pages/home.dart';
 import 'package:recycle_app/services/database.dart';
 import 'package:recycle_app/services/shared_pref.dart';
@@ -44,7 +45,7 @@ class AuthMethods {
       await DatabaseMethods().addUserInfo(userInfoMap, userDetails.uid);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Home()),
+        MaterialPageRoute(builder: (context) => BottomNav()),
       );
     }
   }
