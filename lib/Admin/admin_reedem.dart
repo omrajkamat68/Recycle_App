@@ -15,9 +15,7 @@ class _AdminReedemState extends State<AdminReedem> {
 
   getontheload() async {
     reedemStream = await DatabaseMethods().getAdminReedemApproval();
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   @override
@@ -85,7 +83,7 @@ class _AdminReedemState extends State<AdminReedem> {
                               ),
                               SizedBox(width: 10.0),
                               Text(
-                                "Points Redeem : "+ds["Points"],
+                                "Points Redeem : " + ds["Points"],
                                 style: AppWidget.normaltextstyle(18.0),
                               ),
                             ],
@@ -99,7 +97,7 @@ class _AdminReedemState extends State<AdminReedem> {
                               ),
                               SizedBox(width: 10.0),
                               Text(
-                                "UPI ID : "+ds["UPI"],
+                                "UPI ID : " + ds["UPI"],
                                 style: AppWidget.normaltextstyle(18.0),
                               ),
                             ],
@@ -107,8 +105,13 @@ class _AdminReedemState extends State<AdminReedem> {
                           SizedBox(height: 5.0),
                           GestureDetector(
                             onTap: () async {
-                              await DatabaseMethods().updateAdminReedemRequest(ds.id);
-                              await DatabaseMethods().updateUserReedemRequest(ds["UserId"], ds.id);
+                              await DatabaseMethods().updateAdminReedemRequest(
+                                ds.id,
+                              );
+                              await DatabaseMethods().updateUserReedemRequest(
+                                ds["UserId"],
+                                ds.id,
+                              );
                             },
                             child: Container(
                               height: 40,
@@ -148,22 +151,28 @@ class _AdminReedemState extends State<AdminReedem> {
               padding: const EdgeInsets.only(left: 20.0),
               child: Row(
                 children: [
-                  Material(
-                    elevation: 3.0,
-                    borderRadius: BorderRadius.circular(60),
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(60),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                        size: 30.0,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Material(
+                      elevation: 3.0,
+                      borderRadius: BorderRadius.circular(60),
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(60),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
                       ),
                     ),
                   ),
+
                   SizedBox(width: MediaQuery.of(context).size.width / 7),
                   Text(
                     "Redeem Approval",
@@ -185,10 +194,13 @@ class _AdminReedemState extends State<AdminReedem> {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [SizedBox(height: 20.0),
-                  Container(
-                    height: MediaQuery.of(context).size.height/1.5,
-                    child: allApprovals())],
+                  children: [
+                    SizedBox(height: 20.0),
+                    Container(
+                      height: MediaQuery.of(context).size.height / 1.5,
+                      child: allApprovals(),
+                    ),
+                  ],
                 ),
               ),
             ),

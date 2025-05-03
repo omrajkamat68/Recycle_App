@@ -197,22 +197,28 @@ class _AdminApprovalState extends State<AdminApproval> {
               padding: const EdgeInsets.only(left: 20.0),
               child: Row(
                 children: [
-                  Material(
-                    elevation: 3.0,
-                    borderRadius: BorderRadius.circular(60),
-                    child: Container(
-                      padding: EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(60),
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Colors.white,
-                        size: 30.0,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Material(
+                      elevation: 3.0,
+                      borderRadius: BorderRadius.circular(60),
+                      child: Container(
+                        padding: EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(60),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white,
+                          size: 30.0,
+                        ),
                       ),
                     ),
                   ),
+
                   SizedBox(width: MediaQuery.of(context).size.width / 7),
                   Text(
                     "Admin Approval",
