@@ -48,4 +48,13 @@ class AuthMethods {
       );
     }
   }
+
+  Future SignOut() async {
+    await FirebaseAuth.instance.signOut();
+  }
+
+  Future deleteuser() async {
+    User? user = await FirebaseAuth.instance.currentUser;
+    user?.delete();
+  }
 }
