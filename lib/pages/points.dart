@@ -67,11 +67,20 @@ class _PointsState extends State<Points> {
         if (snapshot.data.docs.length == 0) {
           return const Center(child: Text("No transactions yet."));
         }
+
+        // Sort: Pending first, then Approved (or others)
+        List<DocumentSnapshot> sortedDocs = List.from(snapshot.data.docs);
+        sortedDocs.sort((a, b) {
+          if (a['Status'] == 'Pending' && b['Status'] != 'Pending') return -1;
+          if (a['Status'] != 'Pending' && b['Status'] == 'Pending') return 1;
+          return 0;
+        });
+
         return ListView.builder(
           padding: EdgeInsets.zero,
-          itemCount: snapshot.data.docs.length,
+          itemCount: sortedDocs.length,
           itemBuilder: (context, index) {
-            DocumentSnapshot ds = snapshot.data.docs[index];
+            DocumentSnapshot ds = sortedDocs[index];
             return Container(
               padding: const EdgeInsets.all(10),
               margin: const EdgeInsets.only(

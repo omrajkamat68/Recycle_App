@@ -108,7 +108,7 @@ class _ProfileState extends State<Profile> {
               icon: Icons.logout,
               label: "LogOut",
               onTap: () async {
-                await AuthMethods().SignOut();
+                await AuthMethods().signOut();
                 _navigateToLogin(context);
               },
             ),
@@ -135,7 +135,7 @@ class _ProfileState extends State<Profile> {
                           TextButton(
                             onPressed: () async {
                               Navigator.pop(context);
-                              await AuthMethods().deleteuser();
+                              await AuthMethods().deleteUser();
                               _navigateToLogin(context);
                             },
                             child: const Text(

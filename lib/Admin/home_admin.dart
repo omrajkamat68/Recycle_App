@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recycle_app/Admin/admin_approval.dart';
 import 'package:recycle_app/Admin/admin_reedem.dart';
+import 'package:recycle_app/pages/login.dart'; // Make sure to import your admin login page
 
 class HomeAdmin extends StatelessWidget {
   const HomeAdmin({super.key});
@@ -11,25 +12,33 @@ class HomeAdmin extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // White header with "Home Admin"
-          Container(
-            width: double.infinity,
-            color: Colors.white,
-            padding: const EdgeInsets.only(top: 48, bottom: 18),
-            child: const Center(
-              child: Text(
-                "Home Admin",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "Home Admin",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.black),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => const LogIn()),
+                (route) => false,
+              );
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
           // Bluish background with rounded top corners
           Expanded(
             child: Container(
@@ -51,7 +60,9 @@ class HomeAdmin extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminApproval()),
+                          MaterialPageRoute(
+                            builder: (context) => const AdminApproval(),
+                          ),
                         );
                       },
                     ),
@@ -62,7 +73,9 @@ class HomeAdmin extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminReedem()),
+                          MaterialPageRoute(
+                            builder: (context) => const AdminReedem(),
+                          ),
                         );
                       },
                     ),
@@ -91,7 +104,7 @@ class _AdminHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 110, // Increased card height
+      height: 110,
       margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       child: Card(
         elevation: 4,
@@ -105,7 +118,7 @@ class _AdminHomeCard extends StatelessWidget {
               const SizedBox(width: 18),
               Image.asset(
                 imagePath,
-                width: 64, // Increased image size
+                width: 64,
                 height: 64,
                 fit: BoxFit.contain,
               ),
@@ -114,7 +127,7 @@ class _AdminHomeCard extends StatelessWidget {
                 child: Text(
                   label,
                   style: const TextStyle(
-                    fontSize: 22, // Increased font size
+                    fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
@@ -129,8 +142,3 @@ class _AdminHomeCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

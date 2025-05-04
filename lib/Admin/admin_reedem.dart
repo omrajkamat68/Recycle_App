@@ -28,114 +28,117 @@ class _AdminReedemState extends State<AdminReedem> {
     return StreamBuilder(
       stream: reedemStream,
       builder: (context, AsyncSnapshot snapshot) {
-        return snapshot.hasData
-            ? ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: snapshot.data.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot ds = snapshot.data.docs[index];
-                return Container(
-                  padding: EdgeInsets.all(10),
-                  margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                  width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.data.docs.isEmpty) {
+          return Center(child: Text("No redeem requests."));
+        }
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: snapshot.data.docs.length,
+          separatorBuilder: (context, index) => SizedBox(height: 20),
+          itemBuilder: (context, index) {
+            DocumentSnapshot ds = snapshot.data.docs[index];
+            return Container(
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.only(left: 20.0, right: 20.0),
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      ds["Date"],
+                      textAlign: TextAlign.center,
+                      style: AppWidget.whitetextstyle(22.0),
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(10),
+                  SizedBox(width: 20.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.person, color: Colors.green, size: 25.0),
+                            SizedBox(width: 10.0),
+                            Text(
+                              ds["Name"],
+                              style: AppWidget.normaltextstyle(18.0),
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          ds["Date"],
-                          textAlign: TextAlign.center,
-                          style: AppWidget.whitetextstyle(22.0),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.point_of_sale,
+                              color: Colors.green,
+                              size: 25.0,
+                            ),
+                            SizedBox(width: 10.0),
+                            Text(
+                              "Points Redeem : " + ds["Points"],
+                              style: AppWidget.normaltextstyle(18.0),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 20.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.person,
-                                color: Colors.green,
-                                size: 25.0,
-                              ),
-                              SizedBox(width: 10.0),
-                              Text(
-                                ds["Name"],
-                                style: AppWidget.normaltextstyle(18.0),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.point_of_sale,
-                                color: Colors.green,
-                                size: 25.0,
-                              ),
-                              SizedBox(width: 10.0),
-                              Text(
-                                "Points Redeem : " + ds["Points"],
-                                style: AppWidget.normaltextstyle(18.0),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.monetization_on,
-                                color: Colors.green,
-                                size: 25.0,
-                              ),
-                              SizedBox(width: 10.0),
-                              Text(
-                                "UPI ID : " + ds["UPI"],
-                                style: AppWidget.normaltextstyle(18.0),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 5.0),
-                          GestureDetector(
-                            onTap: () async {
-                              await DatabaseMethods().updateAdminReedemRequest(
-                                ds.id,
-                              );
-                              await DatabaseMethods().updateUserReedemRequest(
-                                ds["UserId"],
-                                ds.id,
-                              );
-                            },
-                            child: Container(
-                              height: 40,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  "Approve",
-                                  style: AppWidget.whitetextstyle(18.0),
-                                ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.monetization_on,
+                              color: Colors.green,
+                              size: 25.0,
+                            ),
+                            SizedBox(width: 10.0),
+                            Text(
+                              "UPI ID : " + ds["UPI"],
+                              style: AppWidget.normaltextstyle(18.0),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5.0),
+                        GestureDetector(
+                          onTap: () async {
+                            await DatabaseMethods().updateAdminReedemRequest(
+                              ds.id,
+                            );
+                            await DatabaseMethods().updateUserReedemRequest(
+                              ds["UserId"],
+                              ds.id,
+                            );
+                          },
+                          child: Container(
+                            height: 40,
+                            width: 150,
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Approve",
+                                style: AppWidget.whitetextstyle(18.0),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
-            )
-            : Container();
+                ],
+              ),
+            );
+          },
+        );
       },
     );
   }
@@ -172,7 +175,6 @@ class _AdminReedemState extends State<AdminReedem> {
                       ),
                     ),
                   ),
-
                   SizedBox(width: MediaQuery.of(context).size.width / 7),
                   Text(
                     "Redeem Approval",
@@ -196,10 +198,7 @@ class _AdminReedemState extends State<AdminReedem> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 20.0),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 1.5,
-                      child: allApprovals(),
-                    ),
+                    Expanded(child: allApprovals()),
                   ],
                 ),
               ),
