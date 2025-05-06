@@ -598,4 +598,91 @@ class _PointsState extends State<Points> {
       ),
     );
   }
+
+  Future openBox() => showDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          content: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(Icons.cancel),
+                      ),
+                      SizedBox(width: 30),
+                      Text(
+                        "Redeem Points",
+                        style: AppWidget.greentextstyle(20.0),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20.0),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black38, width: 2.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TextField(
+                      controller: pointscontroller,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter Points",
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  Text("Add UPI Id", style: AppWidget.normaltextstyle(20.0)),
+                  SizedBox(height: 10.0),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black38, width: 2.0),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: TextField(
+                      controller: upicontroller,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Enter UPI",
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.0),
+                  GestureDetector(
+                    onTap: () {
+                      if(pointscontroller.text!="" && upicontroller.text!=""){
+                        
+                      }
+                    },
+                    child: Center(
+                      child: Container(
+                        width: 100,
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF008080),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Add",
+                            style: AppWidget.whitetextstyle(20.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+  );
 }
