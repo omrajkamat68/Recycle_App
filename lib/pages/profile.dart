@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recycle_app/services/shared_pref.dart';
 import 'package:recycle_app/services/auth.dart';
-import 'package:recycle_app/pages/login.dart'; // Import your login page
+import 'package:recycle_app/pages/login.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);

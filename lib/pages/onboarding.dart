@@ -18,7 +18,7 @@ class _OnboardingState extends State<Onboarding> {
           child: Padding(
             padding: const EdgeInsets.only(
               bottom: 20.0,
-            ), // prevent overflow at bottom
+            ),
             child: Column(
               children: [
                 SizedBox(height: 30.0),

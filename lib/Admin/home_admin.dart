@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recycle_app/Admin/admin_approval.dart';
 import 'package:recycle_app/Admin/admin_reedem.dart';
-import 'package:recycle_app/pages/login.dart'; // Make sure to import your admin login page
+import 'package:recycle_app/pages/login.dart'; 
 
 class HomeAdmin extends StatelessWidget {
   const HomeAdmin({super.key});
@@ -39,7 +39,6 @@ class HomeAdmin extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Bluish background with rounded top corners
           Expanded(
             child: Container(
               width: double.infinity,
