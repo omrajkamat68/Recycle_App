@@ -33,6 +33,14 @@ The **Recycle App** is a mobile application built using **Flutter** and **Dart**
 - ✅ Review and approve user requests for recycling.
 - 💵 Manage users' redeem point requests and transfer money to UPI accounts.
 
+## 🛡️ Admin Credentials
+
+> <img src="https://img.icons8.com/color/48/000000/admin-settings-male.png" width="24" style="vertical-align:middle;"/>  
+> <b>To access the Admin Panel, use the following credentials:</b>
+
+- **👤 Username:** <code>Admin@recycle</code>
+- **🔑 Password:** <code>rec,@admin#</code>
+
 ## 💻 Technologies Used
 - **Frontend:** Flutter, Dart
 - **Backend:** Firebase, Firestore
@@ -51,7 +59,7 @@ The **Recycle App** is a mobile application built using **Flutter** and **Dart**
 1. **Clone the repository:**
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/omrajkamat68/Recycle_App.git
    ```
 
 2. **Install dependencies:**
